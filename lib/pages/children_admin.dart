@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import './product_edit.dart';
-import './product_list.dart';
-//import '../models/product.dart';
+import './child_edit.dart';
+import './child_list.dart';
+//import '../models/child.dart';
 import '../scoped-models/main.dart';
 import '../widgets/ui_elements/logout.dart';
 

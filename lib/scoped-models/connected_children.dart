@@ -3,7 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import '../models/user.dart';
-import '../models/product.dart';
+import '../models/child.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConnectedProductsModel extends Model {

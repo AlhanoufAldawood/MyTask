@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../widgets/helpers/ensure_visible.dart';
-import '../models/product.dart';
+import '../models/child.dart';
 import '../scoped-models/main.dart';
 
 class ProductEditPage extends StatefulWidget {

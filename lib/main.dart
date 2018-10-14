@@ -4,9 +4,9 @@ import 'package:scoped_model/scoped_model.dart';
 // import 'package:flutter/rendering.dart';
 
 import './pages/auth.dart';
-import './pages/products_admin.dart';
-import './pages/products.dart';
-import './pages/product.dart';
+import './pages/children_admin.dart';
+import './pages/children.dart';
+import './pages/child.dart';
 import './scoped-models/main.dart';
 
 void main() {
