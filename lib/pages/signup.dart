@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'package:scoped_model/scoped_model.dart';
+import '../scoped-models/main.dart';
+
 
 class Signup extends StatefulWidget {
   @override
@@ -74,7 +77,7 @@ class _SignupState extends State<Signup> {
       obscureText: true,
       controller: _passwordTextController,
       validator: (String value) {
-        if (value.isEmpty || value.length < 5) {
+        if (value.isEmpty || value.length < 6) {
           return 'Password is required and should be 5+ characters long.';
         }
       },
@@ -97,7 +100,6 @@ class _SignupState extends State<Signup> {
           return 'password do not match';
 
       },
-      onSaved: (String value) {},
 
 
     );
@@ -106,13 +108,27 @@ class _SignupState extends State<Signup> {
 
 
 
-    void _submitForm() {
+    void _submitForm(Function signUp) async {
     if (!_formKey.currentState.validate() ) {
       return;
     }
     _formKey.currentState.save();
-    print(_formData);
-    Navigator.pushReplacementNamed(context, '/products');
+   final Map<String , dynamic> successInformation = await signUp(_formData['email'], _formData['password']);
+   if (successInformation['success']) {
+      Navigator.pushReplacementNamed(context, '/products');
+   } else{
+     showDialog(context: context,builder: (BuildContext context){
+       return AlertDialog(
+         title:Text( 'Somthing wrong!!'),
+         content: Text( successInformation['message']), actions: <Widget>[
+
+         FlatButton(child: Text('OK'), onPressed: (){
+           Navigator.of(context).pop();
+         },)
+       ],);
+
+     });
+   }
   }
 
   @override
@@ -165,12 +181,15 @@ class _SignupState extends State<Signup> {
         SizedBox(
           height: 40.0,
         ),
-
+    ScopedModelDescendant <MainModel>(builder:(BuildContext context , Widget child , MainModel model) {
+    return model.isloading ? CircularProgressIndicator() :
     RaisedButton(
     color: Colors.white,
     textColor: Colors.blueGrey,
     child: Text('SIGN UP'),
-    onPressed: _submitForm,
+    onPressed: () => _submitForm(model.signUp),
+    );
+    }
     ),
 
         ]
