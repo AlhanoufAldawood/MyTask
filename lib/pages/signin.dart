@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../scoped-models/main.dart';
 
-class signin extends StatefulWidget {
+
+class SignIn extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _SigninState();
+    return _SignInState();
   }
 }
 
-class _SigninState extends State<signin> {
+class _SignInState extends State<SignIn> {
   final Map<String, dynamic> _formData = {
     'email': null,
     'password': null,
@@ -31,7 +32,7 @@ class _SigninState extends State<signin> {
   Widget _buildEmailTextField() {
     return TextFormField(
       decoration: InputDecoration(
-          labelText: 'E-Mail', filled: true, fillColor: Colors.white),
+          labelText: 'E-Mail', filled: true, fillColor: Colors.white70),
       keyboardType: TextInputType.emailAddress,
       validator: (String value) {
         if (value.isEmpty ||
@@ -49,7 +50,7 @@ class _SigninState extends State<signin> {
   Widget _buildPasswordTextField() {
     return TextFormField(
       decoration: InputDecoration(
-          labelText: 'Password', filled: true, fillColor: Colors.white),
+          labelText: 'Password', filled: true, fillColor: Colors.white70),
       obscureText: true,
       validator: (String value) {
         if (value.isEmpty || value.length < 6) {
@@ -70,7 +71,7 @@ class _SigninState extends State<signin> {
     _formKey.currentState.save();
 
     final Map<String, dynamic> successInformation =
-        await login(_formData['email'], _formData['password']);
+        await login(_formData['email'], _formData['password'] );
 
     if (successInformation['success']) {
       Navigator.pushReplacementNamed(context, '/products');
@@ -119,15 +120,15 @@ class _SigninState extends State<signin> {
                     ),
                     _buildPasswordTextField(),
                     SizedBox(
-                      height: 10.0,
+                      height: 40.0,
                     ),
                     ScopedModelDescendant<MainModel>(builder:
                         (BuildContext context, Widget child, MainModel model) {
                       return model.isloading
                           ? CircularProgressIndicator()
                           : RaisedButton(
-                              color: Colors.white,
-                              textColor: Colors.red[200],
+                              color: Colors.blueGrey,
+                              textColor: Colors.white,
                               child: Text('SIGN IN'),
                               onPressed: () => _submitForm(model.login),
                             );

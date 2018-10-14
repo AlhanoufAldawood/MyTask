@@ -13,28 +13,28 @@ class Auth extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
 
-    final double deviceWidth = MediaQuery.of(context).size.width;
-    final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
+   // final double deviceWidth = MediaQuery.of(context).size.width;
+    //final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     return DefaultTabController(
       length: 2,
       child:
       Scaffold(
         appBar:
-        //AppBar(
-         // backgroundColor: Colors.white,
-       // title:  Text('Home' ,
-          //style: new TextStyle(color: Colors.red[200]) ,),
-         //bottom:
+        AppBar(
+          backgroundColor: Colors.blueGrey,
+        title:  Text('Home' ,
+          style: new TextStyle(color: Colors.white) ,),
+         bottom:
         TabBar (
 
-          labelColor: Colors.red[200],
-          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          indicatorColor: Colors.blueGrey,
 
           tabs: <Widget>[
             Tab(
 
               //icon: Icon(Icons.person),
-              text: 'Sign in',),
+              text: 'Sign In',),
 
 
             Tab(
@@ -42,9 +42,9 @@ class Auth extends StatelessWidget{
               text: 'Sign Up',),
           ],),
 
-       // ),
+        ),
         body: TabBarView(children: <Widget>[
-          signin(),
+          SignIn(),
           Signup(),
 
 

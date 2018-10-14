@@ -143,10 +143,12 @@ class _SignupState extends State<Signup> {
 
           padding: EdgeInsets.all(10.0),
 
+
              child: Center(
                child: SingleChildScrollView(
                   child: Container(
                       width: targetWidth,
+
                          child: Form(
                             key: _formKey,
                                 child: Column(
@@ -184,8 +186,8 @@ class _SignupState extends State<Signup> {
     ScopedModelDescendant <MainModel>(builder:(BuildContext context , Widget child , MainModel model) {
     return model.isloading ? CircularProgressIndicator() :
     RaisedButton(
-    color: Colors.white,
-    textColor: Colors.blueGrey,
+    color: Colors.blueGrey,
+    textColor: Colors.white,
     child: Text('SIGN UP'),
     onPressed: () => _submitForm(model.signUp),
     );

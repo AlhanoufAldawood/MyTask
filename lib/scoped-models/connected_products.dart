@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import '../models/user.dart';
 import '../models/product.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConnectedProductsModel extends Model {
   List<Child> _childern = [];
@@ -25,7 +26,8 @@ class ConnectedProductsModel extends Model {
       'parentId': _authenticatedUser.id,
     };
     return http
-        .post('https://mytask-8c4b1.firebaseio.com/childern.json',
+        .post(
+            'https://mytask-8c4b1.firebaseio.com/childern.json?auth=${_authenticatedUser.token}',
             body: json.encode(childData))
         .then((http.Response response) {
       _isLoading = false;
@@ -78,7 +80,7 @@ class ProductsModel extends ConnectedProductsModel {
     };
     return http
         .put(
-            'https://mytask-8c4b1.firebaseio.com/childern/${selectedProduct.id}.json',
+            'https://mytask-8c4b1.firebaseio.com/childern/${selectedProduct.id}.json?auth=${_authenticatedUser.token}',
             body: json.encode(updateData))
         .then((http.Response response) {
       _isLoading = false;
@@ -107,7 +109,7 @@ class ProductsModel extends ConnectedProductsModel {
 
     http
         .delete(
-            'https://mytask-8c4b1.firebaseio.com/childern/${deletedChildId}.json')
+            'https://mytask-8c4b1.firebaseio.com/childern/${deletedChildId}.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -118,7 +120,8 @@ class ProductsModel extends ConnectedProductsModel {
     _isLoading = true;
     notifyListeners();
     http
-        .get('https://mytask-8c4b1.firebaseio.com/childern.json')
+        .get(
+            'https://mytask-8c4b1.firebaseio.com/childern.json?auth=${_authenticatedUser.token}')
         .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
@@ -156,6 +159,14 @@ class ProductsModel extends ConnectedProductsModel {
 }
 
 class UserModel extends ConnectedProductsModel {
+
+  User get user{
+
+    return _authenticatedUser;
+  }
+
+
+
   Future<Map<String, dynamic>> login(String email, String password) async {
     _isLoading = true;
     notifyListeners();
@@ -178,6 +189,17 @@ class UserModel extends ConnectedProductsModel {
     if (responseData.containsKey('idToken')) {
       hasError = false;
       message = 'Authenticaton sucecede';
+
+      _authenticatedUser = User(
+          id: responseData['localId'],
+          email: email,
+          token: responseData['idToken']);
+
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', responseData['idToken']);
+      prefs.setString('userEmail', email);
+      prefs.setString('userId', responseData['localId']);
+
     } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
       message = 'Email not found !!';
     } else if (responseData['error']['message'] == 'INVALID_PASSWORD') {
@@ -208,7 +230,19 @@ class UserModel extends ConnectedProductsModel {
 
     if (responseData.containsKey('idToken')) {
       hasError = false;
-      message = 'Authenticaton sucecede';
+      message = 'Authenticaton suceceded';
+
+      _authenticatedUser = User(
+          id: responseData['localId'],
+          email: email,
+          token: responseData['idToken']);
+
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('token', responseData['idToken']);
+      prefs.setString('userEmail', email);
+      prefs.setString('userId', responseData['localId']);
+
+
     } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
       message = 'This email is already exists';
     }
@@ -216,6 +250,31 @@ class UserModel extends ConnectedProductsModel {
     _isLoading = false;
     notifyListeners();
     return {'success': !hasError, 'message': message};
+  }
+
+  void autoAuthenticate() async{
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String token = prefs.getString('token');
+
+    if(token != null){
+      final String userEmail = prefs.getString('userEmail');
+      final String userId = prefs.getString('userId');
+
+      _authenticatedUser = User(id: userId, email: userEmail, token: token);
+      notifyListeners();
+    }
+
+
+  }
+
+  void logout() async{
+    _authenticatedUser = null;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('token');
+    prefs.remove('userEmail');
+    prefs.remove('userId');
+
   }
 }
 
