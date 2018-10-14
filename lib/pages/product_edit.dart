@@ -4,7 +4,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../widgets/helpers/ensure_visible.dart';
 import '../models/product.dart';
-import '../scoped-models/products.dart';
+import '../scoped-models/main.dart';
 
 class ProductEditPage extends StatefulWidget {
   @override
@@ -15,6 +15,7 @@ class ProductEditPage extends StatefulWidget {
 
 class _ProductEditPageState extends State<ProductEditPage> {
   final Map<String, dynamic> _formData = {
+
     'name': null,
     'gender': null,
     'age': null,
@@ -22,6 +23,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'password': null,
     'image': 'assets/food.jpg'
   };
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _nameFocusNode = FocusNode();
   final _genderFocusNode = FocusNode();
@@ -33,7 +35,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
 
 
-  Widget _buildNameTextField(Product product) {
+  Widget _buildNameTextField(Child product) {
     return EnsureVisibleWhenFocused(
       focusNode: _nameFocusNode,
 
@@ -55,7 +57,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
 
-  Widget _buildGenderTextField(Product product) {
+  Widget _buildGenderTextField(Child product) {
     return EnsureVisibleWhenFocused(
       focusNode: _genderFocusNode,
 
@@ -77,7 +79,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  Widget _buildAgeTextField(Product product) {
+  Widget _buildAgeTextField(Child product) {
     return EnsureVisibleWhenFocused(
       focusNode: _ageFocusNode,
       child: TextFormField(
@@ -99,7 +101,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  Widget _buildUserTextField(Product product) {
+  Widget _buildUserTextField(Child product) {
     return EnsureVisibleWhenFocused(
       focusNode: _userFocusNode,
 
@@ -121,7 +123,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  Widget _buildPasswordTextField(Product product) {
+  Widget _buildPasswordTextField(Child product) {
     return EnsureVisibleWhenFocused(
       focusNode: _passwordFocusNode,
 
@@ -143,19 +145,20 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildSubmitButton() {
-    return ScopedModelDescendant<ProductsModel>(
-      builder: (BuildContext context, Widget child, ProductsModel model) {
-        return RaisedButton(
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
+        return model.isloading ? Center(child: CircularProgressIndicator()) :
+          RaisedButton(
           child: Text('Save'),
           textColor: Colors.white,
-          onPressed: () => _submitForm(model.addProduct, model.updateProduct,
+          onPressed: () => _submitForm(model.addProduct, model.updateProduct, model.selectProduct,
               model.selectedProductIndex),
         );
       },
     );
   }
 
-  Widget _buildPageContent(BuildContext context, Product product) {
+  Widget _buildPageContent(BuildContext context, Child product) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     final double targetPadding = deviceWidth - targetWidth;
@@ -195,7 +198,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  void _submitForm(Function addProduct, Function updateProduct,
+  void _submitForm(Function addProduct, Function updateProduct, Function setSelectedProduct,
       [int selectedProductIndex]) {
     if (!_formKey.currentState.validate()) {
       return;
@@ -203,32 +206,38 @@ class _ProductEditPageState extends State<ProductEditPage> {
     _formKey.currentState.save();
     if (selectedProductIndex == null) {
       addProduct(
-        Product(
-            name: _formData['name'],
-            gender: _formData['gender'],
-            age: _formData['age'],
-            user: _formData['user'],
-            password: _formData['password']),
 
-    );
+             _formData['name'],
+           _formData['gender'],
+            _formData['age'],
+             _formData['user'],
+             _formData['password'],
+      ).then((_) =>  Navigator
+          .pushReplacementNamed(context, '/products')
+          .then((_) => setSelectedProduct(null)));
+
+
     } else {
       updateProduct(
-        Product(
-            name: _formData['name'],
-            gender: _formData['gender'],
-            age: _formData['age'],
-            user: _formData['user'],
-            password: _formData['password']),
-      );
+
+             _formData['name'],
+            _formData['gender'],
+            _formData['age'],
+             _formData['user'],
+             _formData['password'])
+          .then((_) =>  Navigator
+          .pushReplacementNamed(context, '/products')
+          .then((_) => setSelectedProduct(null)));
+
     }
 
-    Navigator.pushReplacementNamed(context, '/products');
+
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<ProductsModel>(
-      builder: (BuildContext context, Widget child, ProductsModel model) {
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget child, MainModel model) {
 
         final Widget pageContent =
             _buildPageContent(context, model.selectedProduct);

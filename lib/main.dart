@@ -8,7 +8,7 @@ import './pages/products_admin.dart';
 import './pages/products.dart';
 import './pages/product.dart';
 import './models/product.dart';
-import './scoped-models/products.dart';
+import './scoped-models/main.dart';
 
 void main() {
   // debugPaintSizeEnabled = true;
@@ -27,23 +27,26 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<ProductsModel>(
-      model: ProductsModel(),
+
+    final MainModel model = MainModel();
+
+    return ScopedModel<MainModel>(
+      model:model,
       child: MaterialApp(
         // debugShowMaterialGrid: true,
         theme: ThemeData(
             brightness: Brightness.light,
             primarySwatch: Colors.blueGrey,
             bottomAppBarColor: Colors.white,
-            accentColor: Colors.yellow,
+            accentColor: Colors.red[400],
             buttonColor: Colors.blueGrey,
-             cardColor: Colors.transparent,
+             cardColor: Colors.white70,
         ),
         // home: AuthPage(),
         routes: {
           '/': (BuildContext context) => Auth(),
-          '/products': (BuildContext context) => ProductsPage(),
-          '/admin': (BuildContext context) => ProductsAdminPage(),
+          '/products': (BuildContext context) => ProductsPage(model),
+          '/admin': (BuildContext context) => ProductsAdminPage(model),
         },
         onGenerateRoute: (RouteSettings settings) {
           final List<String> pathElements = settings.name.split('/');
@@ -61,7 +64,7 @@ class _MyAppState extends State<MyApp> {
         },
         onUnknownRoute: (RouteSettings settings) {
           return MaterialPageRoute(
-              builder: (BuildContext context) => ProductsPage());
+              builder: (BuildContext context) => ProductsPage(model));
         },
       ),
     );

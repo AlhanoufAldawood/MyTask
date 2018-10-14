@@ -1,8 +1,26 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/products/products.dart';
+import 'package:scoped_model/scoped_model.dart';
+import '../scoped-models/main.dart';
 
-class ProductsPage extends StatelessWidget {
+class ProductsPage extends StatefulWidget {
+
+  final MainModel model;
+  ProductsPage(this.model);
+
+  State<StatefulWidget> createState(){
+    return _ProductPageState();
+  }
+}
+
+class _ProductPageState extends State<ProductsPage>{
+
+  @override
+  initState(){
+    widget.model.fetchData();
+    super.initState();
+  }
 
   Widget _buildSideDrawer(BuildContext context) {
     return Drawer(
@@ -10,10 +28,10 @@ class ProductsPage extends StatelessWidget {
       child: Column(
         children: <Widget>[
           AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.blueGrey,
             automaticallyImplyLeading: false,
             title: Text('Choose',
-            style: new TextStyle(color: Colors.red[400]),),
+            style: new TextStyle(color: Colors.white),),
           ),
 
       ListTile(
@@ -28,6 +46,21 @@ class ProductsPage extends StatelessWidget {
     );
   }
 
+  Widget _buildChildernList(){
+    return ScopedModelDescendant(builder: (BuildContext context , Widget child, MainModel model)
+    {
+      Widget content = Center(child: Text('No childern found :('));
+       if (model.allProducts.length > 0 && !model.isloading){
+
+         content = Products();
+      } else if (model.isloading){
+         content = Center(child: CircularProgressIndicator());
+       }
+     return  content ;
+    });
+        // LECTURE 172 from 5:00
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,10 +68,10 @@ class ProductsPage extends StatelessWidget {
       drawer: _buildSideDrawer(context),
 
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.red[400]),
+        backgroundColor: Colors.blueGrey,
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text('Parents Home Page',
-        style: new TextStyle(color: Colors.red[400]),
+        style: new TextStyle(color: Colors.white),
       ),
         actions: <Widget>[
          // IconButton(
@@ -56,7 +89,7 @@ class ProductsPage extends StatelessWidget {
     image: AssetImage('assets/Welcomebackground.png'),),),
     padding: EdgeInsets.all(10.0),
 
-      child: Products(),
+      child: _buildChildernList(),
       ));
   }
 }

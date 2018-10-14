@@ -6,7 +6,7 @@ import '../ui_elements/title_default.dart';
 import '../../models/product.dart';
 
 class ProductCard extends StatelessWidget {
-  final Product product;
+  final Child product;
   final int productIndex;
 
   ProductCard(this.product, this.productIndex);
@@ -26,7 +26,7 @@ class ProductCard extends StatelessWidget {
 
     FlatButton(
     child: Text(product.name,
-    style: new TextStyle(fontSize: 30.0 ,color: Colors.pink[50], fontWeight:FontWeight.bold ),
+    style: new TextStyle(fontSize: 30.0 ,color: Colors.blueGrey, fontWeight:FontWeight.bold ),
     ),
     onPressed: () => Navigator.pushNamed<bool>(context, '/product/' + productIndex.toString()),
     ),
